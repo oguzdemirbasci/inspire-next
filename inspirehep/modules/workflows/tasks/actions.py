@@ -334,7 +334,7 @@ def populate_journal_coverage(obj, eng):
     if not journals:
         return
 
-    if any(get_value(journal, '_harvesting_info.coverage') == 'full' for journal in journals):
+    if any(get_value(journal, '_harvesting_info.coverage') == 'full' for journal in journals if journal is not None):
         obj.extra_data['journal_coverage'] = 'full'
     else:
         obj.extra_data['journal_coverage'] = 'partial'
@@ -584,7 +584,7 @@ def normalize_journal_titles(obj, eng):
                 cast(RecordMetadata.json['short_title'], String) == type_coerce(normalized_title, JSON))
             result = db.session.execute(ref_query).fetchone()
 
-            if result:
+            if result and result.records_metadata_json['self'] is not None:
                 obj.data['publication_info'][index]['journal_record'] = result.records_metadata_json['self']
 
 
